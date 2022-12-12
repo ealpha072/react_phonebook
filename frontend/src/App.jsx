@@ -12,22 +12,38 @@ const App = (props) => {
   const [contacts, setContacts] = useState(props.contacts)
   const [values, setValues] = useState(initialFormValues)
   const [showAll, setShowAll] = useState(true)
+  const [searchTerm, setSearchTerm] = useState('')
+  const [searchResults, setSearchResults] = useState([])
 
   const contactsToShow = showAll ? contacts : contacts.filter(contact => contact.important == true)
+
   const addContact = (e) => {
     e.preventDefault()
     console.log('Form submitted')
-    const contactObject = {
-      id:contacts.length + 1,
-      name: values.name,
-      number:values.number,
-      date:new Date().toISOString(),
-      important:Math.random() < 0.5
+    //check if name is already added;
+    const nameCheck = contacts.filter(contact => contact.name === values.name)
+
+    if (nameCheck.length > 0){
+      alert(`${values.name} already exists in phonebook`)
+    }else{
+      const contactObject = {
+        id:contacts.length + 1,
+        name: values.name,
+        number:values.number,
+        date:new Date().toISOString(),
+        important:Math.random() < 0.5
+      }
+  
+      console.log(contactObject)
+      setContacts(contacts.concat(contactObject))
+      setValues(initialFormValues)
     }
 
-    console.log(contactObject)
-    setContacts(contacts.concat(contactObject))
-    setValues(initialFormValues)
+  }
+
+  const searchName = (searchName) => {
+    const filteredName = contacts.filter(contact => contact.name.includes(searchName))
+    console.log(filteredName)
   }
 
   const handleInputChange = (event) => {
@@ -36,6 +52,14 @@ const App = (props) => {
       ...values,
       [name]:value
     })
+  }
+
+  const handleSearchTermChange = (e)=> {
+    e.preventDefault()
+    setSearchTerm(e.target.value)
+    const filteredName = contacts.filter(contact => contact.name.toLowerCase().includes(searchTerm.toLowerCase()))
+    setSearchResults(filteredName)
+    console.log(filteredName)
   }
 
   return (
@@ -66,7 +90,21 @@ const App = (props) => {
           <button type='submit' >Add</button>
         </form>
       </div>
+      <div className="search">
+        <input 
+          type="text" 
+          placeholder='Type name to search' 
+          value={searchTerm} 
+          onChange={handleSearchTermChange} 
+        />
+        <div className="search-results">
+          {
+            searchResults.length === 0 ? "Nothing found" : searchResults.map(result => <Contact key={result.id}  contact={result}/>)
+          }
+        </div>
+      </div>
       <div className="container">
+        <h4>All contacts</h4>
         <ul>
           {contactsToShow.map(contact => 
             <Contact key={contact.id} contact = {contact}/>)

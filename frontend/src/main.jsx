@@ -24,7 +24,7 @@ const contacts = [
     number: '0794565312',
     date: '2019-05-30T17:30:31.098Z',
     important: false
-  },
+  }
 ]
 
 ReactDOM.createRoot(document.getElementById('root')).render(
