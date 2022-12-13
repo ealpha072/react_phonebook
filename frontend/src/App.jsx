@@ -42,6 +42,13 @@ const App = () => {
         date:new Date().toISOString(),
         important:Math.random() < 0.5
       }
+
+      axios
+      .post("http://localhost:3001/contacts", contactObject)
+      .then(response => {
+        setContacts(contacts.concat(response.data))
+        console.log(response)
+      })
   
       console.log(contactObject)
       setContacts(contacts.concat(contactObject))
@@ -64,6 +71,15 @@ const App = () => {
     const filteredName = contacts.filter(contact => contact.name.toLowerCase().includes(searchTerm.toLowerCase()))
     setSearchResults(filteredName)
     console.log(filteredName)
+  }
+
+  const toggleImportant = (id) => {
+    const url = `http://localhost:3001/contacts/${id}`
+    const contact = contacts.find(contact => contact.id === id)
+    const changedContact = {...contact, important: !contact.important}
+    axios.put(url, changedContact).then(response => {
+      console.log(response.data)
+    })
   }
 
   return (
@@ -114,7 +130,12 @@ const App = () => {
         <h4>All contacts</h4>
         <ul>
           {contactsToShow.map(contact => 
-            <Contact key={contact.id} contact = {contact}/>)
+            <Contact 
+              key={contact.id} 
+              contact = {contact}
+              toggleImportance = {()=>toggleImportant(contact.id)}
+            />
+            )
           }
         </ul>
       </div>

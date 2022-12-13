@@ -14,3 +14,7 @@ form input{
 form{
   margin-bottom: 20px;
 }
+
+ul li{
+  margin-bottom: 2px;
+}
