@@ -1,0 +1,33 @@
+{
+    "contacts":[
+        {
+          "id": 1,
+          "name": "Alpha Emmanuel",
+          "number": "0798975799",
+          "date": "2019-05-30T17:30:31.098Z",
+          "important": true
+        },
+        {
+            "id": 2,
+            "name": "Crazone Kemunto",
+            "number": "0798786755",
+            "date": "2019-05-30T17:30:31.098Z",
+            "important": true
+        },
+        {
+            "id": 3,
+            "name": "David Omollo",
+            "number": "07986754334",
+            "date": "2019-05-30T17:30:31.098Z",
+            "important": false
+        },
+        {
+            "id": 4,
+            "name": "Charity Chege",
+            "number": "07984567309",
+            "date": "2019-05-30T17:30:31.098Z",
+            "important": false
+        }
+        
+    ]
+}

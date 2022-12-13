@@ -1,19 +1,28 @@
+import axios from 'axios'
 import React from 'react'
-import { useState } from 'react'
+import { useState, useEffect} from 'react'
 import Contact from './Components/Contact'
 
-const App = (props) => {
+const App = () => {
 
   const initialFormValues = {
     name: '',
     number:''
   }
 
-  const [contacts, setContacts] = useState(props.contacts)
+  const [contacts, setContacts] = useState([])
   const [values, setValues] = useState(initialFormValues)
   const [showAll, setShowAll] = useState(true)
   const [searchTerm, setSearchTerm] = useState('')
   const [searchResults, setSearchResults] = useState([])
+
+  useEffect(()=>{
+    axios
+      .get("http://localhost:3001/contacts")
+      .then(response => {
+        setContacts(response.data)
+      })
+  }, [])
 
   const contactsToShow = showAll ? contacts : contacts.filter(contact => contact.important == true)
 
@@ -39,11 +48,6 @@ const App = (props) => {
       setValues(initialFormValues)
     }
 
-  }
-
-  const searchName = (searchName) => {
-    const filteredName = contacts.filter(contact => contact.name.includes(searchName))
-    console.log(filteredName)
   }
 
   const handleInputChange = (event) => {
@@ -76,7 +80,7 @@ const App = (props) => {
               value={values.name}
               name='name' 
               onChange={handleInputChange} 
-            />
+            /> <br />
 
             <input 
               type="number" 
@@ -91,6 +95,7 @@ const App = (props) => {
         </form>
       </div>
       <div className="search">
+        Search by Name <br></br>
         <input 
           type="text" 
           placeholder='Type name to search' 
@@ -98,9 +103,11 @@ const App = (props) => {
           onChange={handleSearchTermChange} 
         />
         <div className="search-results">
-          {
-            searchResults.length === 0 ? "Nothing found" : searchResults.map(result => <Contact key={result.id}  contact={result}/>)
-          }
+          <h6>
+            {
+              searchResults.length === 0 ? "Nothing found" : searchResults.map(result => <Contact key={result.id}  contact={result}/>)
+            }
+          </h6>
         </div>
       </div>
       <div className="container">
