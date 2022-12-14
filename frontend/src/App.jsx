@@ -4,143 +4,151 @@ import contactServices from './services/contact'
 
 const App = () => {
 
-  const initialFormValues = {
-    name: '',
-    number:''
-  }
-
-  const [contacts, setContacts] = useState([])
-  const [values, setValues] = useState(initialFormValues)
-  const [showAll, setShowAll] = useState(true)
-  const [searchTerm, setSearchTerm] = useState('')
-  const [searchResults, setSearchResults] = useState([])
-
-  useEffect(()=>{
-    contactServices
-      .getALl()
-      .then(response => {
-        setContacts(response)
-    })
-  }, [])
-
-  const contactsToShow = showAll ? contacts : contacts.filter(contact => contact.important == true)
-
-  const addContact = (e) => {
-    e.preventDefault()
-    console.log('Form submitted')
-    //check if name is already added;
-    const nameCheck = contacts.filter(contact => contact.name === values.name)
-
-    if (nameCheck.length > 0){
-      alert(`${values.name} already exists in phonebook`)
-    }else{
-      const contactObject = {
-        id:Math.floor(Math.random())*100,
-        name: values.name,
-        number:values.number,
-        date:new Date().toISOString(),
-        important:Math.random() < 0.5
-      }
-
-      contactServices
-        .create(contactObject)
-        .then(response => {
-          setContacts(contacts.concat(response))
-          setValues(initialFormValues)
-      })
+    const initialFormValues = {
+        name: '',
+        number:''
     }
-  }
 
-  const handleInputChange = (event) => {
-    const {name, value} = event.target
-    setValues({
-      ...values,
-      [name]:value
-    })
-  }
+    const [contacts, setContacts] = useState([])
+    const [values, setValues] = useState(initialFormValues)
+    const [showAll, setShowAll] = useState(true)
+    const [searchTerm, setSearchTerm] = useState('')
+    const [searchResults, setSearchResults] = useState([])
 
-  const handleSearchTermChange = (e)=> {
-    e.preventDefault()
-    setSearchTerm(e.target.value)
-    const filteredName = contacts.filter(contact => contact.name.toLowerCase().includes(searchTerm.toLowerCase()))
-    setSearchResults(filteredName)
-    console.log(filteredName)
-  }
+    useEffect(()=>{
+        contactServices
+        .getALl()
+        .then(response => {
+            setContacts(response)
+        })
+    }, [])
 
-  const toggleImportant = (id) => {
-    const contact = contacts.find(contact => contact.id === id)
-    const changedContact = {...contact, important: !contact.important}
+    const contactsToShow = showAll ? contacts : contacts.filter(contact => contact.important == true)
 
-    contactServices
-      .update(id, changedContact)
-      .then(response => {
-        setContacts(contacts.map(contact => contact.id !== id ?  contact :  response))
-      })
-      .catch(error => {
-        alert(`Contact ${contact.name} does not exist any more`)
-        setContacts(contacts.filter(contact => contact.id !== id))
-      })
-  }
+    const addContact = (e) => {
+        e.preventDefault()
+        //check if name is already added;
+        const nameCheck = contacts.filter(contact => contact.name === values.name)
 
-  return (
-    <div>
-      <h1>Alpha Phonebook</h1>
-      <button onClick={()=>setShowAll(false)}>Show {!showAll ? 'All' : 'Important'}</button>
+        if (nameCheck.length > 0){
+        alert(`${values.name} already exists in phonebook`)
+        }else{
+        const contactObject = {
+            id:Math.floor(Math.random())*100,
+            name: values.name,
+            number:values.number,
+            date:new Date().toISOString(),
+            important:Math.random() < 0.5
+        }
 
-      <div className="input-contacts" >
-        <form action="" onSubmit={addContact}>
-          <div className="input-fields">
-            <input 
-              type="text" 
-              placeholder='Input name' 
-              value={values.name}
-              name='name' 
-              onChange={handleInputChange} 
-            /> <br />
+        contactServices
+            .create(contactObject)
+            .then(response => {
+            setContacts(contacts.concat(response))
+            setValues(initialFormValues)
+        })
+        }
+    }
 
-            <input 
-              type="number" 
-              placeholder='Phone number' 
-              value={values.number} 
-              name='number'
-              onChange={handleInputChange} 
-            />
+    const handleInputChange = (event) => {
+        const {name, value} = event.target
+        setValues({
+        ...values,
+        [name]:value
+        })
+    }
 
-          </div>
-          <button type='submit' >Add</button>
-        </form>
-      </div>
-      <div className="search">
-        Search by Name <br></br>
-        <input 
-          type="text" 
-          placeholder='Type name to search' 
-          value={searchTerm} 
-          onChange={handleSearchTermChange} 
-        />
-        <div className="search-results">
-          <h6>
-            {
-              searchResults.length === 0 ? "Nothing found" : searchResults.map(result => <Contact key={result.id}  contact={result}/>)
-            }
-          </h6>
+    const handleSearchTermChange = (e)=> {
+        e.preventDefault()
+        setSearchTerm(e.target.value)
+        const filteredName = contacts.filter(contact => contact.name.toLowerCase().includes(searchTerm.toLowerCase()))
+        setSearchResults(filteredName)
+        console.log(filteredName)
+    }
+
+    const toggleImportant = (id) => {
+        const contact = contacts.find(contact => contact.id === id)
+        const changedContact = {...contact, important: !contact.important}
+
+        contactServices
+        .update(id, changedContact)
+        .then(response => {
+            setContacts(contacts.map(contact => contact.id !== id ?  contact :  response))
+        })
+        .catch(error => {
+            alert(`Contact ${contact.name} does not exist any more`)
+            setContacts(contacts.filter(contact => contact.id !== id))
+        })
+    }
+
+    const removeContact = id => {
+        contactServices
+        .remove(id)
+        .then(response => {
+            setContacts(contacts.filter(c => c.id !== id))
+        })
+    }
+
+    return (
+        <div>
+        <h1>Alpha Phonebook</h1>
+        <button onClick={()=>setShowAll(false)}>Show {!showAll ? 'All' : 'Important'}</button>
+
+        <div className="input-contacts" >
+            <form action="" onSubmit={addContact}>
+            <div className="input-fields">
+                <input 
+                type="text" 
+                placeholder='Input name' 
+                value={values.name}
+                name='name' 
+                onChange={handleInputChange} 
+                /> <br />
+
+                <input 
+                type="number" 
+                placeholder='Phone number' 
+                value={values.number} 
+                name='number'
+                onChange={handleInputChange} 
+                />
+
+            </div>
+            <button type='submit' >Add</button>
+            </form>
         </div>
-      </div>
-      <div className="container">
-        <h4>All contacts</h4>
-        <ul>
-          {contactsToShow.map(contact => 
-            <Contact 
-              key={contact.id} 
-              contact = {contact}
-              toggleImportance = {()=>toggleImportant(contact.id)}
+        <div className="search">
+            Search by Name <br></br>
+            <input 
+            type="text" 
+            placeholder='Type name to search' 
+            value={searchTerm} 
+            onChange={handleSearchTermChange} 
             />
-            )
-          }
-        </ul>
-      </div>
-    </div>
-  )
+            <div className="search-results">
+            <h6>
+                {
+                searchResults.length === 0 ? "Nothing found" : searchResults.map(result => <Contact key={result.id}  contact={result}/>)
+                }
+            </h6>
+            </div>
+        </div>
+        <div className="container">
+            <h4>All contacts</h4>
+            <ul>
+            {contactsToShow.map(contact => 
+                <Contact 
+                key={contact.id} 
+                contact = {contact}
+                toggleImportance = {()=>toggleImportant(contact.id)}
+                removeContact = {()=>removeContact(contact.id)}
+                />
+                )
+            }
+            </ul>
+        </div>
+        </div>
+    )
 }
 
 export default App
