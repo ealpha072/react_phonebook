@@ -1,7 +1,6 @@
-import axios from 'axios'
-import React from 'react'
 import { useState, useEffect} from 'react'
 import Contact from './Components/Contact'
+import contactServices from './services/contact'
 
 const App = () => {
 
@@ -17,11 +16,11 @@ const App = () => {
   const [searchResults, setSearchResults] = useState([])
 
   useEffect(()=>{
-    axios
-      .get("http://localhost:3001/contacts")
+    contactServices
+      .getALl()
       .then(response => {
-        setContacts(response.data)
-      })
+        setContacts(response)
+    })
   }, [])
 
   const contactsToShow = showAll ? contacts : contacts.filter(contact => contact.important == true)
@@ -36,25 +35,20 @@ const App = () => {
       alert(`${values.name} already exists in phonebook`)
     }else{
       const contactObject = {
-        id:contacts.length + 1,
+        id:Math.floor(Math.random())*100,
         name: values.name,
         number:values.number,
         date:new Date().toISOString(),
         important:Math.random() < 0.5
       }
 
-      axios
-      .post("http://localhost:3001/contacts", contactObject)
-      .then(response => {
-        setContacts(contacts.concat(response.data))
-        console.log(response)
+      contactServices
+        .create(contactObject)
+        .then(response => {
+          setContacts(contacts.concat(response))
+          setValues(initialFormValues)
       })
-  
-      console.log(contactObject)
-      setContacts(contacts.concat(contactObject))
-      setValues(initialFormValues)
     }
-
   }
 
   const handleInputChange = (event) => {
@@ -74,12 +68,18 @@ const App = () => {
   }
 
   const toggleImportant = (id) => {
-    const url = `http://localhost:3001/contacts/${id}`
     const contact = contacts.find(contact => contact.id === id)
     const changedContact = {...contact, important: !contact.important}
-    axios.put(url, changedContact).then(response => {
-      console.log(response.data)
-    })
+
+    contactServices
+      .update(id, changedContact)
+      .then(response => {
+        setContacts(contacts.map(contact => contact.id !== id ?  contact :  response))
+      })
+      .catch(error => {
+        alert(`Contact ${contact.name} does not exist any more`)
+        setContacts(contacts.filter(contact => contact.id !== id))
+      })
   }
 
   return (

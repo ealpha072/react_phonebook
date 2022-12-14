@@ -36,11 +36,18 @@
       "important": false
     },
     {
-        "id": 7,
-        "name": "Alpha Ochieng",
-        "number": "0767546634",
-        "date": "2022-12-13T19:01:14.817Z",
-        "important": true
+      "id": 7,
+      "name": "Alpha Ochieng",
+      "number": "0767546634",
+      "date": "2022-12-13T19:01:14.817Z",
+      "important": false
+    },
+    {
+      "id": 8,
+      "name": "Teddy Ogoti",
+      "number": "0765456677",
+      "date": "2022-12-14T18:51:32.803Z",
+      "important": true
     }
   ]
 }
