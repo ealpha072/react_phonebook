@@ -28,25 +28,38 @@ const App = () => {
     const addContact = (e) => {
         e.preventDefault()
         //check if name is already added;
-        const nameCheck = contacts.filter(contact => contact.name === values.name)
+        const nameCheck = contacts.find(contact => contact.name === values.name)
 
-        if (nameCheck.length > 0){
-        alert(`${values.name} already exists in phonebook`)
+        console.log(nameCheck)
+        if (nameCheck){
+            if(confirm(`${values.name} already exists in phonebook, update phone number ?`)){
+                const changedContact = {...nameCheck, number:values.number}
+                console.log(changedContact)
+                contactServices
+                    .update(nameCheck.id, changedContact)
+                    .then(response=>{
+                        setContacts(contacts.map(contact => contact.id !== nameCheck.id ? contact : response))
+                    })
+                    .catch(error=>{
+                        console.error(error.response.data)
+                        setContacts(contacts.filter(contact => contact.id !== nameCheck.id))
+                    })
+            }
         }else{
-        const contactObject = {
-            id:Math.floor(Math.random())*100,
-            name: values.name,
-            number:values.number,
-            date:new Date().toISOString(),
-            important:Math.random() < 0.5
-        }
+            const contactObject = {
+                id:Math.floor(Math.random())*100,
+                name: values.name,
+                number:values.number,
+                date:new Date().toISOString(),
+                important:Math.random() < 0.5
+            }
 
-        contactServices
-            .create(contactObject)
-            .then(response => {
-            setContacts(contacts.concat(response))
-            setValues(initialFormValues)
-        })
+            contactServices
+                .create(contactObject)
+                .then(response => {
+                    setContacts(contacts.concat(response))
+                    setValues(initialFormValues)
+                })
         }
     }
 
@@ -81,12 +94,14 @@ const App = () => {
         })
     }
 
-    const removeContact = id => {
-        contactServices
-        .remove(id)
-        .then(response => {
-            setContacts(contacts.filter(c => c.id !== id))
-        })
+    const removeContact = (id,name) => {
+        if(confirm(`Confirm deletion of ${name} from phonebook`)){
+            contactServices
+            .remove(id)
+            .then(response => {
+                setContacts(contacts.filter(c => c.id !== id))
+            })
+        }
     }
 
     return (

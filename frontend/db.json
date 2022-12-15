@@ -1,13 +1,6 @@
 {
   "contacts": [
     {
-      "id": 3,
-      "name": "David Omollo",
-      "number": "07986754334",
-      "date": "2019-05-30T17:30:31.098Z",
-      "important": false
-    },
-    {
       "id": 4,
       "name": "Charity Chege",
       "number": "07984567309",
@@ -31,7 +24,7 @@
     {
       "id": 7,
       "name": "Alpha Ochieng",
-      "number": "0767546634",
+      "number": "556757",
       "date": "2022-12-13T19:01:14.817Z",
       "important": false
     },
