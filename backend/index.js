@@ -1,6 +1,7 @@
+/* eslint-disable semi */
 import dotenv from 'dotenv'
-dotenv.config({path:'.env'})
-import express, { json } from 'express'
+dotenv.config({ path:'.env' })
+import express from 'express'
 import mongoose from 'mongoose'
 import cors from 'cors'
 
@@ -23,11 +24,11 @@ app.use(cors())
 
 
 //routes
-app.post('/contacts', (req, res, next)=>{
+app.post('/contacts', (req, res, next) => {
     const contact = req.body
 
     if(contact.name === undefined || contact.number === undefined){
-        res.status(404).json({error:'Contact missing name or number'})
+        res.status(404).json({ error:'Contact missing name or number' })
     }
 
     const newContact = new Contact({
@@ -42,7 +43,7 @@ app.post('/contacts', (req, res, next)=>{
     }).catch(error => next(error))
 })
 
-app.put('/contacts/:id', (req, res, next)=> {
+app.put('/contacts/:id', (req, res, next) => {
     const body = req.body
     const contact = {
         name:body.name,
@@ -51,11 +52,11 @@ app.put('/contacts/:id', (req, res, next)=> {
     }
 
     Contact.findByIdAndUpdate(
-        req.params.id, contact, {new:true, runValidators:true, context: 'query'})
-    .then(results => {
-        res.json(results)
-    })
-    .catch(error => next(error))
+        req.params.id, contact, { new:true, runValidators:true, context: 'query' })
+        .then(results => {
+            res.json(results)
+        })
+        .catch(error => next(error))
 })
 
 app.get('/contacts', (req, res) => {
@@ -65,7 +66,7 @@ app.get('/contacts', (req, res) => {
 })
 
 
-app.get('/contacts/:id', (req, res, next)=>{
+app.get('/contacts/:id', (req, res, next) => {
     Contact.findById(req.params.id).then(contact => {
         if(contact){
             res.json(contact)
@@ -76,23 +77,22 @@ app.get('/contacts/:id', (req, res, next)=>{
     }).catch(error => next(error))
 })
 
-app.delete('/contacts/:id', (req, res, next) =>{
-    Contact.findByIdAndRemove(req.params.id).then(result => {
+app.delete('/contacts/:id', (req, res, next) => {
+    Contact.findByIdAndRemove(req.params.id).then( result => {
         res.status(204).end()
-    })
-    .catch(error => next(error))
+    }).catch(error => next(error))
 })
 
 const unKnownEndPoints = (request, response) => {
-    response.status(404).send({error:'Unknown endpoint'})
+    response.status(404).send({ error:'Unknown endpoint' })
 }
 
 const errorHandler = (error, req, res, next) => {
     console.log(error)
     if(error.name === 'CastError'){
-        return res.status(404).json({error:'Malformatted id'})
+        return res.status(404).json({ error:'Malformatted id' })
     } else if(error.name === 'ValidationError'){
-        return res.status(404).json({error:error.message})
+        return res.status(404).json({ error:error.message })
     }
     next(error)
 }
@@ -104,10 +104,9 @@ const PORT = process.env.PORT
 const url = process.env.MONGODB_URL
 
 mongoose.connect(url)
-    .then(()=>{
+    .then(() => {
         console.log('Connected to MONGODB')
-        app.listen(PORT, ()=>console.log(`Server running on port ${PORT}`))
+        app.listen(PORT, () => console.log(`Server running on port ${PORT}`))
     })
-    .catch(err => console.log(err.message)
-)
+    .catch(err => console.log(err.message))
 
