@@ -47,7 +47,7 @@ const App = () => {
             }
         }else{
             const contactObject = {
-                id:Math.floor(Math.random())*100,
+                id:Math.floor(Math.random()*100),
                 name: values.name,
                 number:values.number,
                 date:new Date().toISOString(),
