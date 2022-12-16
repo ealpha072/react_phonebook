@@ -42,6 +42,21 @@ app.post('/contacts', (req, res)=>{
     })
 })
 
+app.put('/contacts/:id', (req, res, next)=> {
+    const body = req.body
+    const contact = {
+        name:body.name,
+        number:body.number,
+        important:body.important,
+    }
+
+    Contact.findByIdAndUpdate(req.params.id, contact, {new:true})
+    .then(results => {
+        res.json(results)
+    })
+    .catch(error => next(error))
+})
+
 app.get('/contacts', (req, res) => {
     Contact.find({}).then(contacts => {
         res.json(contacts)
@@ -60,11 +75,11 @@ app.get('/contacts/:id', (req, res, next)=>{
     }).catch(error => next(error))
 })
 
-app.delete('/contacts/:id', (req, res) =>{
-    const id = Number(req.params.id)
-    const contact = contacts.filter(n => n.id !== id)
-
-    res.status(204).end()
+app.delete('/contacts/:id', (req, res, next) =>{
+    Contact.findByIdAndRemove(req.params.id).then(result => {
+        res.status(204).end()
+    })
+    .catch(error => next(error))
 })
 
 const unKnownEndPoints = (request, response) => {
