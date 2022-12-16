@@ -23,7 +23,7 @@ app.use(cors())
 
 
 //routes
-app.post('/contacts', (req, res)=>{
+app.post('/contacts', (req, res, next)=>{
     const contact = req.body
 
     if(contact.name === undefined || contact.number === undefined){
@@ -39,7 +39,7 @@ app.post('/contacts', (req, res)=>{
 
     newContact.save().then(savedContact => {
         res.json(savedContact)
-    })
+    }).catch(error => next(error))
 })
 
 app.put('/contacts/:id', (req, res, next)=> {
@@ -50,7 +50,8 @@ app.put('/contacts/:id', (req, res, next)=> {
         important:body.important,
     }
 
-    Contact.findByIdAndUpdate(req.params.id, contact, {new:true})
+    Contact.findByIdAndUpdate(
+        req.params.id, contact, {new:true, runValidators:true, context: 'query'})
     .then(results => {
         res.json(results)
     })
@@ -90,6 +91,8 @@ const errorHandler = (error, req, res, next) => {
     console.log(error)
     if(error.name === 'CastError'){
         return res.status(404).json({error:'Malformatted id'})
+    } else if(error.name === 'ValidationError'){
+        return res.status(404).json({error:error.message})
     }
     next(error)
 }
