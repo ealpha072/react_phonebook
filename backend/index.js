@@ -28,4 +28,6 @@ app.use('/contacts', contactRouter)
 app.use(middleware.unKnownEndPoints)
 app.use(middleware.errorHandler)
 
+export default app
+
 
