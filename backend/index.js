@@ -2,6 +2,7 @@
 import config from './utils/config.js'
 import express from 'express'
 const app = express()
+app.use(express.static('dist'))
 import mongoose from 'mongoose'
 import cors from 'cors'
 import logger from './utils/logger.js'

@@ -94,7 +94,7 @@ const App = () => {
         })
     }
 
-    const removeContact = (id,name) => {
+    const removeContact = (id, name) => {
         if(confirm(`Confirm deletion of ${name} from phonebook`)){
             contactServices
             .remove(id)
@@ -156,7 +156,7 @@ const App = () => {
                 key={contact.id} 
                 contact = {contact}
                 toggleImportance = {()=>toggleImportant(contact.id)}
-                removeContact = {()=>removeContact(contact.id)}
+                removeContact = {()=>removeContact(contact.id, contact.name)}
                 />
                 )
             }
