@@ -105,63 +105,65 @@ const App = () => {
     }
 
     return (
-        <div>
-        <h1>Alpha Phonebook</h1>
-        <button onClick={()=>setShowAll(false)}>Show {!showAll ? 'All' : 'Important'}</button>
+        <div className='container'>
+			<div className="inner-container">
+				<h1>Alpha Phonebook</h1>
 
-        <div className="input-contacts" >
-            <form action="" onSubmit={addContact}>
-            <div className="input-fields">
-                <input 
-                type="text" 
-                placeholder='Input name' 
-                value={values.name}
-                name='name' 
-                onChange={handleInputChange} 
-                /> <br />
+				<div className="input-contacts" >
+					<form action="" onSubmit={addContact}>
+						<div className="input-fields">
+							<input 
+							type="text" 
+							placeholder='Input name' 
+							value={values.name}
+							name='name' 
+							onChange={handleInputChange} 
+							/> <br />
 
-                <input 
-                type="number" 
-                placeholder='Phone number' 
-                value={values.number} 
-                name='number'
-                onChange={handleInputChange} 
-                />
+							<input 
+							type="number" 
+							placeholder='Phone number' 
+							value={values.number} 
+							name='number'
+							onChange={handleInputChange} 
+							/>
 
-            </div>
-            <button type='submit' >Add</button>
-            </form>
-        </div>
-        <div className="search">
-            Search by Name <br></br>
-            <input 
-            type="text" 
-            placeholder='Type name to search' 
-            value={searchTerm} 
-            onChange={handleSearchTermChange} 
-            />
-            <div className="search-results">
-            <h6>
-                {
-                searchResults.length === 0 ? "Nothing found" : searchResults.map(result => <Contact key={result.id}  contact={result}/>)
-                }
-            </h6>
-            </div>
-        </div>
-        <div className="container">
-            <h4>All contacts</h4>
-            <ul>
-            {contactsToShow.map(contact => 
-                <Contact 
-                key={contact.id} 
-                contact = {contact}
-                toggleImportance = {()=>toggleImportant(contact.id)}
-                removeContact = {()=>removeContact(contact.id, contact.name)}
-                />
-                )
-            }
-            </ul>
-        </div>
+							<button type='submit' className='add-btn btn'>Add</button>
+						</div>
+					</form>
+				</div>
+				<div className="search">
+					Search by Name <br></br>
+					<input 
+					type="text" 
+					placeholder='Type name to search' 
+					value={searchTerm} 
+					onChange={handleSearchTermChange} 
+					/>
+					<div className="search-results">
+						<h6>
+							{
+							searchResults.length === 0 ? "Nothing found" : searchResults.map(result => <Contact key={result.id}  contact={result}/>)
+							}
+						</h6>
+					</div>
+				</div>
+				<div className="container-contacts">
+					<h4>All contacts</h4>
+					<button onClick={()=>setShowAll(false)} className="btn" >Show {!showAll ? 'All' : 'Important'}</button>
+					<ul>
+					{contactsToShow.map(contact => 
+						<Contact 
+						key={contact.id} 
+						contact = {contact}
+						toggleImportance = {()=>toggleImportant(contact.id)}
+						removeContact = {()=>removeContact(contact.id, contact.name)}
+						/>
+						)
+					}
+					</ul>
+				</div>
+			</div>
         </div>
     )
 }

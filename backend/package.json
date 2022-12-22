@@ -11,6 +11,7 @@
     "test": "cross-env NODE_ENV=test jest --verbose --runInBand --forceExit",
     "build:ui": "rm -rf dist && cd ../frontend/ && npm run build && cp -r dist ../backend",
     "deploy": "git push heroku master",
+    "deploy:back":"git add . && git commit -m Backendbuild && npm run deploy",
     "deploy:full": "npm run build:ui && git add . && git commit -m uibuild && npm run deploy",
     "logs:prod": "heroku logs --tail"
   },

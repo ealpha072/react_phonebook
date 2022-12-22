@@ -4,6 +4,21 @@ import  express from 'express'
 const contactRouter = express.Router()
 
 //routes
+contactRouter.get('/', async (req, res) => {
+    const contacts = await Contact.find({})
+    res.json(contacts)
+})
+
+contactRouter.get('/:id', (req, res, next) => {
+    Contact.findById(req.params.id).then(contact => {
+        if(contact){
+            res.json(contact)
+        }else{
+            res.status(404).end()
+        }
+    }).catch(error => next(error))
+})
+
 contactRouter.post('/', (req, res, next) => {
     const contact = req.body
 
@@ -37,24 +52,6 @@ contactRouter.put('/:id', (req, res, next) => {
             res.json(results)
         })
         .catch(error => next(error))
-})
-
-contactRouter.get('/', (req, res) => {
-    Contact.find({}).then(contacts => {
-        res.json(contacts)
-    })
-})
-
-
-contactRouter.get('/:id', (req, res, next) => {
-    Contact.findById(req.params.id).then(contact => {
-        if(contact){
-            res.json(contact)
-        }else{
-            res.status(404).end()
-        }
-
-    }).catch(error => next(error))
 })
 
 contactRouter.delete('/contacts/:id', (req, res, next) => {
