@@ -1,0 +1,9 @@
+POST http://localhost:5000/contacts
+Content-Type: application/json
+Authorization: bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VybmFtZSI6InJvb3QiLCJpZCI6IjYzYTlhNTkxYTljYTEwMjM2NDUwYTQ4ZSIsImlhdCI6MTY3MjA2ODIwOX0.mRdM5jwt11coFMBci4vTlm50t7pWE34F9hUVnrnVElY
+
+{
+    "name":"Maria Wakau",
+    "number":"07965645443",
+    "important":"false"
+}

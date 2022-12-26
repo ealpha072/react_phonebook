@@ -1,26 +1,49 @@
 import Contact from '../models/contact.js'
+import User from '../models/users.js'
 import  express from 'express'
+import jwt from 'jsonwebtoken'
 
 const contactRouter = express.Router()
 
+const getTokenFrom = request => {
+    const authorization = request.get('authorization')
+    if (authorization && authorization.toLowerCase().startsWith('bearer ')){
+        return authorization.substring(7)
+    }
+    return null
+}
+
 //routes
 contactRouter.get('/', async (req, res) => {
-    const contacts = await Contact.find({})
+    const contacts = await Contact.find({}).populate('user', { username:1, name:1 })
     res.json(contacts)
 })
 
-contactRouter.get('/:id', (req, res, next) => {
-    Contact.findById(req.params.id).then(contact => {
+contactRouter.get('/:id', async (req, res, next) => {
+    try {
+        const contact = await Contact.findById(req.params.id)
         if(contact){
             res.json(contact)
         }else{
             res.status(404).end()
         }
-    }).catch(error => next(error))
+    } catch (error) {
+        next(error)
+    }
 })
 
-contactRouter.post('/', (req, res, next) => {
+contactRouter.post('/', async (req, res, next) => {
     const contact = req.body
+    const token = getTokenFrom(req)
+    console.log(token)
+    const decodedToken = jwt.verify(token, process.env.SECRET)
+
+    if(!decodedToken.id) {
+        return res.status(401).json({ error:'Invalid token' })
+    }
+
+    const user = await User.findById(contact.userId)
+    console.log(user)
 
     if(contact.name === undefined || contact.number === undefined){
         res.status(404).json({ error:'Contact missing name or number' })
@@ -30,15 +53,22 @@ contactRouter.post('/', (req, res, next) => {
         name: contact.name,
         number:contact.number,
         date: new Date(),
-        important: contact.important || true
+        important: contact.important || true,
+        user:user._id
     })
 
-    newContact.save().then(savedContact => {
-        res.json(savedContact)
-    }).catch(error => next(error))
+    try {
+        const savedContact = await newContact.save()
+        user.contacts = user.contacts.concat(savedContact._id)
+        const savedUser = await user.save()
+        res.status(201).json({ savedUser })
+    } catch (error) {
+        next(error)
+    }
+
 })
 
-contactRouter.put('/:id', (req, res, next) => {
+contactRouter.put('/:id', async (req, res, next) => {
     const body = req.body
     const contact = {
         name:body.name,
@@ -46,19 +76,23 @@ contactRouter.put('/:id', (req, res, next) => {
         important:body.important,
     }
 
-    Contact.findByIdAndUpdate(
-        req.params.id, contact, { new:true, runValidators:true, context: 'query' })
-        .then(results => {
-            res.json(results)
-        })
-        .catch(error => next(error))
+    try {
+        const updatedContact = await Contact.findByIdAndUpdate(
+            req.params.id, contact, { new:true, runValidators:true, context: 'query' }
+        )
+        res.json(updatedContact)
+    } catch (error) {
+        next(error)
+    }
 })
 
-contactRouter.delete('/contacts/:id', (req, res, next) => {
-    Contact.findByIdAndRemove(req.params.id).then( result => {
-        console.log(result)
+contactRouter.delete('/:id', async (req, res, next) => {
+    try {
+        await Contact.findByIdAndRemove(req.params.id)
         res.status(204).end()
-    }).catch(error => next(error))
+    } catch (error) {
+        next(error)
+    }
 })
 
 export default contactRouter
