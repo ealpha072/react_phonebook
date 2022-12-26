@@ -1,6 +1,8 @@
 import { useState, useEffect} from 'react'
 import Contact from './Components/Contact'
 import contactServices from './services/contact'
+import loginServices from './services/login'
+import Loginform from './Components/Loginform'
 
 const App = () => {
 
@@ -9,11 +11,19 @@ const App = () => {
         number:''
     }
 
+    const initialLoginValues = {
+        username: '',
+        password:''
+    }
+
     const [contacts, setContacts] = useState([])
     const [values, setValues] = useState(initialFormValues)
     const [showAll, setShowAll] = useState(true)
     const [searchTerm, setSearchTerm] = useState('')
     const [searchResults, setSearchResults] = useState([])
+    const [loginDetails, setLoginDetails] = useState(initialLoginValues)
+    const [user, setUser] = useState(null)
+    const [errorMsg, setErrorMsg] = useState('')
 
     useEffect(()=>{
         contactServices
@@ -28,6 +38,7 @@ const App = () => {
     const addContact = (e) => {
         e.preventDefault()
         //check if name is already added;
+        console.log(values)
         const nameCheck = contacts.find(contact => contact.name === values.name)
 
         console.log(nameCheck)
@@ -104,34 +115,96 @@ const App = () => {
         }
     }
 
+    const loginInputChange = (event) => {
+        const {name, value} = event.target
+        setLoginDetails({
+        ...loginDetails,
+        [name]:value
+        })
+    }
+
+    const handleLoginForm = async (e) => {
+        e.preventDefault()
+        console.log(loginDetails)
+        try {
+            const username = loginDetails.username
+            const pass = loginDetails.password
+
+            const user = await loginServices.login({
+                username, pass
+            })
+            setUser(user)
+            setLoginDetails(initialLoginValues)
+        } catch (error) {
+            setErrorMsg('Invalid username or password')
+            setTimeout(()=> {
+                setErrorMsg(null)
+            }, 5000)
+        }
+
+    }
+
+    const loginForm = () => {
+        <div>
+            <form action="" onSubmit={handleLoginForm}>
+            <div className="input-fields">
+                <input
+                type="text"
+                placeholder="Username"
+                name="username"
+                values={loginDetails.username}
+                onChange={loginInputChange}
+                />
+
+                <input
+                type="password"
+                placeholder="Password"
+                name="password"
+                values={loginDetails.password}
+                onChange={loginInputChange}
+                />
+                <button type="submit" className="btn add-btn">
+                Login
+                </button>
+            </div>
+            </form>
+        </div>;
+    }
+
+    const contactForm  = () => {
+        <div className="input-contacts">
+          <form action="" onSubmit={addContact}>
+            <div className="input-fields">
+              <input
+                type="text"
+                placeholder="Input name"
+                value={values.name}
+                name="name"
+                onChange={handleInputChange}
+              />{" "}
+              <br />
+              <input
+                type="number"
+                placeholder="Phone number"
+                value={values.number}
+                name="number"
+                onChange={handleInputChange}
+              />
+              <button type="submit" className="add-btn btn">
+                Add
+              </button>
+            </div>
+          </form>
+        </div>;
+    }
+
     return (
         <div className='container'>
 			<div className="inner-container">
 				<h1>Alpha Phonebook</h1>
 
-				<div className="input-contacts" >
-					<form action="" onSubmit={addContact}>
-						<div className="input-fields">
-							<input 
-							type="text" 
-							placeholder='Input name' 
-							value={values.name}
-							name='name' 
-							onChange={handleInputChange} 
-							/> <br />
+                {user == null ? loginForm() : contactForm()}
 
-							<input 
-							type="number" 
-							placeholder='Phone number' 
-							value={values.number} 
-							name='number'
-							onChange={handleInputChange} 
-							/>
-
-							<button type='submit' className='add-btn btn'>Add</button>
-						</div>
-					</form>
-				</div>
 				<div className="search">
 					Search by Name <br></br>
 					<input 
