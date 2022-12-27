@@ -4,6 +4,7 @@ import contactServices from './services/contact'
 import loginServices from './services/login'
 import Loginform from './Components/Loginform'
 import Contactform from './Components/Contactform'
+import Searchform from './Components/Searchform'
 
 const App = () => {
 
@@ -100,7 +101,6 @@ const App = () => {
         setSearchTerm(e.target.value)
         const filteredName = contacts.filter(contact => contact.name.toLowerCase().includes(searchTerm.toLowerCase()))
         setSearchResults(filteredName)
-        console.log(filteredName)
     }
 
     const toggleImportant = (id) => {
@@ -172,54 +172,44 @@ const App = () => {
     return (
         <div className='container'>
 			<div className="inner-container">
-				<h1>Alpha Phonebook</h1>
-                {errorMsg !== '' ? <h5>{errorMsg}</h5> : ''}
+				<h1><i className='fa fa-address-book-o'></i> Alpha Phonebook</h1>
+                {errorMsg !== '' ? <h5 className='error-msg'>{errorMsg}</h5> : ''}
                 {user === null ? 
                     <Loginform 
                         handleLoginForm={handleLoginForm }
                         loginDetails={loginDetails}
                         loginInputChange={loginInputChange}
                     /> : 
-                    <Contactform 
-                        addContact={addContact }
-                        values={values}
-                        handleInputChange={handleInputChange}
-                    />
+                    <div>
+                        <Contactform
+                            addContact={addContact }
+                            values={values}
+                            handleInputChange={handleInputChange}
+                        />
+                        <Searchform
+                            searchTerm={searchTerm }
+                            handleSearchTermChange={handleSearchTermChange }
+                            searchResults={searchResults}
+                        />
+                        <div className="container-contacts">
+                            <h4>All contacts</h4>
+                            <button onClick={()=>setShowAll(false)} className="btn" >Show {!showAll ? 'All' : 'Important'}</button>
+                            <ul>
+                            {contactsToShow.map(contact =>
+                                <Contact
+                                    key={contact.id}
+                                    contact = {contact}
+                                    toggleImportance = {()=>toggleImportant(contact.id)}
+                                    removeContact = {()=>removeContact(contact.id, contact.name)}
+                                />
+                                )
+                            }
+                            </ul>
+                        </div>
+                        <button onClick={logoutUser} className="logout btn"><i className='fa fa-sign-out'></i>Logout</button>
+                    </div>
                 }
-
-				<div className="search">
-					Search by Name <br></br>
-					<input 
-					type="text" 
-					placeholder='Type name to search' 
-					value={searchTerm} 
-					onChange={handleSearchTermChange} 
-					/>
-					<div className="search-results">
-						<h6>
-							{
-							searchResults.length === 0 ? "Nothing found" : searchResults.map(result => <Contact key={result.id}  contact={result}/>)
-							}
-						</h6>
-					</div>
-				</div>
-				<div className="container-contacts">
-					<h4>All contacts</h4>
-					<button onClick={()=>setShowAll(false)} className="btn" >Show {!showAll ? 'All' : 'Important'}</button>
-					<ul>
-					{contactsToShow.map(contact => 
-						<Contact 
-                            key={contact.id} 
-                            contact = {contact}
-                            toggleImportance = {()=>toggleImportant(contact.id)}
-                            removeContact = {()=>removeContact(contact.id, contact.name)}
-						/>
-						)
-					}
-					</ul>
-				</div>
 			</div>
-            <button onClick={logoutUser} className="logout btn">Logout</button>
         </div>
     )
 }

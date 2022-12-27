@@ -34,6 +34,16 @@ html{
   margin: 20px;
 }
 
+.form-row{
+  width: 100%;
+}
+
+/*buttons*/
+button{
+  cursor: pointer;
+  text-align: center;
+}
+
 .btn{
   font-family: monospace;
   height:30px;
@@ -43,12 +53,42 @@ html{
   font-size:14px;
   border-radius:5px;
   cursor: pointer;
+  display: flex;
+  align-items: center;
 }
 
-.add-btn{
-  width: 50px;
+.login-btn, .add-btn{
+  width: fit-content;
 }
 
+.logout{
+  width: 20%;
+}
+
+.contact-btns button{
+  margin-left: 5px;
+  border:none;
+  font-size: 14px;
+  font-family: monospace;
+  border-radius: 5px;
+}
+
+
+/*icons ------------------*/
+.fa-trash-o{
+  color: red;
+}
+
+.fa-check{
+  color:green;
+}
+
+.icon-mrg{
+  margin-right: 6px;
+}
+
+
+/*inputs */
 input{
   font-size: 14px;
   border-radius:0;
@@ -65,12 +105,11 @@ input:focus{
   border-bottom: 2px solid var(--dark);
 }
 
-h1{
-  color: var(--darkest);
-}
-
-form, .search, .container-contacts, li{
-  margin-top: var(--mgt);
+.login-input{
+  margin-top: 20px;
+  margin-bottom: 20px;
+  width: 80%;
+  margin-left: 10px;
 }
 
 .input-fields{
@@ -78,19 +117,44 @@ form, .search, .container-contacts, li{
   margin-bottom: var(--mgt);
 }
 
+.login-fields{
+  display: flex;
+  flex-direction: column;
+}
+
 .search input{
   width: 90%;
 }
 
-ul{
-  list-style-type: none;
+/*headings */
+h1{
+  color: var(--darkest);
+  text-align: center;
 }
+
+.error-msg{
+  color: red;
+}
+
+
+form, .search, .container-contacts, li{
+  margin-top: var(--mgt);
+}
+
+ul{
+  padding-left: 0;
+}
+
 
 li{
+  padding: 8px;
   display: flex;
+  border-radius: 6px;
+  box-shadow: rgba(0, 0, 0, 0.15) 1.95px 1.95px 2.6px;
+  width: 95%;
+  justify-content: space-between;
 }
 
-.logout{
-  margin: 10px;
-  border-radius: 24px;
+.contents{
+  font-size: 14px;
 }

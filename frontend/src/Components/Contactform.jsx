@@ -4,6 +4,7 @@ const Contactform = ({addContact, values, handleInputChange}) => {
   return (
     <div>
         <form action="" onSubmit={addContact}>
+            <h4><i className='fa fa-plus-circle icon-mrg'></i> Add new Contact</h4>
             <div className="input-fields">
               <input
                 type="text"
@@ -21,6 +22,7 @@ const Contactform = ({addContact, values, handleInputChange}) => {
                 onChange={handleInputChange}
               />
               <button type="submit" className="add-btn btn">
+                <i className='fa fa-plus-circle'></i>
                 Add
               </button>
             </div>
