@@ -89,3 +89,8 @@ ul{
 li{
   display: flex;
 }
+
+.logout{
+  margin: 10px;
+  border-radius: 24px;
+}

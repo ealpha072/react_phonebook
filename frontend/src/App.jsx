@@ -24,6 +24,7 @@ const App = () => {
     const [user, setUser] = useState(null)
     const [errorMsg, setErrorMsg] = useState('')
 
+
     useEffect(()=>{
         contactServices
         .getALl()
@@ -32,6 +33,15 @@ const App = () => {
         })
     }, [])
 
+    useEffect(()=>{
+        const loggedInUserDetails = window.localStorage.getItem('loggedAppUser')
+
+        if(loggedInUserDetails){
+            const user = JSON.parse(loggedInUserDetails)
+            setUser(user)
+            contactServices.setToken(user.token)
+        }
+    }, [])
     const contactsToShow = showAll ? contacts : contacts.filter(contact => contact.important == true)
 
     const addContact = (e) => {
@@ -134,6 +144,11 @@ const App = () => {
             const user = await loginServices.login({
                 username, password
             })
+
+            window.localStorage.setItem(
+                'loggedAppUser', JSON.stringify(user)
+            )
+
             contactServices.setToken(user.token)
             setUser(user)
             //setLoginDetails(initialLoginValues)
@@ -144,6 +159,11 @@ const App = () => {
             }, 5000)
         }
 
+    }
+
+    const logoutUser = () => {
+        window.localStorage.removeItem('loggedAppUser')
+        setUser(null)
     }
 
     const loginForm = () => (
@@ -239,6 +259,7 @@ const App = () => {
 					</ul>
 				</div>
 			</div>
+            <button onClick={logoutUser} className="logout btn">Logout</button>
         </div>
     )
 }
