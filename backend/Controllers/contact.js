@@ -34,6 +34,7 @@ contactRouter.get('/:id', async (req, res, next) => {
 
 contactRouter.post('/', async (req, res, next) => {
     const contact = req.body
+    console.log(contact)
     const token = getTokenFrom(req)
     console.log(token)
     const decodedToken = jwt.verify(token, process.env.SECRET)
@@ -60,12 +61,11 @@ contactRouter.post('/', async (req, res, next) => {
     try {
         const savedContact = await newContact.save()
         user.contacts = user.contacts.concat(savedContact._id)
-        const savedUser = await user.save()
-        res.status(201).json({ savedUser })
+        await user.save()
+        res.status(201).json(savedContact)
     } catch (error) {
         next(error)
     }
-
 })
 
 contactRouter.put('/:id', async (req, res, next) => {

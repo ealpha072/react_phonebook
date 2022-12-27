@@ -2,7 +2,6 @@ import { useState, useEffect} from 'react'
 import Contact from './Components/Contact'
 import contactServices from './services/contact'
 import loginServices from './services/login'
-import Loginform from './Components/Loginform'
 
 const App = () => {
 
@@ -41,7 +40,6 @@ const App = () => {
         console.log(values)
         const nameCheck = contacts.find(contact => contact.name === values.name)
 
-        console.log(nameCheck)
         if (nameCheck){
             if(confirm(`${values.name} already exists in phonebook, update phone number ?`)){
                 const changedContact = {...nameCheck, number:values.number}
@@ -58,16 +56,18 @@ const App = () => {
             }
         }else{
             const contactObject = {
-                id:Math.floor(Math.random()*100),
+                id:Math.floor(Math.random()) * 1000000000,
                 name: values.name,
                 number:values.number,
                 date:new Date().toISOString(),
-                important:Math.random() < 0.5
+                important:Math.random() < 0.5,
+                userId:user.id
             }
 
             contactServices
                 .create(contactObject)
                 .then(response => {
+                    console.log(response)
                     setContacts(contacts.concat(response))
                     setValues(initialFormValues)
                 })
@@ -126,15 +126,17 @@ const App = () => {
     const handleLoginForm = async (e) => {
         e.preventDefault()
         console.log(loginDetails)
+
         try {
             const username = loginDetails.username
-            const pass = loginDetails.password
+            const password = loginDetails.password
 
             const user = await loginServices.login({
-                username, pass
+                username, password
             })
+            contactServices.setToken(user.token)
             setUser(user)
-            setLoginDetails(initialLoginValues)
+            //setLoginDetails(initialLoginValues)
         } catch (error) {
             setErrorMsg('Invalid username or password')
             setTimeout(()=> {
@@ -144,7 +146,7 @@ const App = () => {
 
     }
 
-    const loginForm = () => {
+    const loginForm = () => (
         <div>
             <form action="" onSubmit={handleLoginForm}>
             <div className="input-fields">
@@ -168,10 +170,10 @@ const App = () => {
                 </button>
             </div>
             </form>
-        </div>;
-    }
+        </div>
+    )
 
-    const contactForm  = () => {
+    const contactForm  = () => (
         <div className="input-contacts">
           <form action="" onSubmit={addContact}>
             <div className="input-fields">
@@ -181,7 +183,7 @@ const App = () => {
                 value={values.name}
                 name="name"
                 onChange={handleInputChange}
-              />{" "}
+              />
               <br />
               <input
                 type="number"
@@ -195,15 +197,15 @@ const App = () => {
               </button>
             </div>
           </form>
-        </div>;
-    }
+        </div>
+    )
 
     return (
         <div className='container'>
 			<div className="inner-container">
 				<h1>Alpha Phonebook</h1>
-
-                {user == null ? loginForm() : contactForm()}
+                {errorMsg !== '' ? <h5>{errorMsg}</h5> : ''}
+                {user === null ? loginForm() : contactForm()}
 
 				<div className="search">
 					Search by Name <br></br>
@@ -227,10 +229,10 @@ const App = () => {
 					<ul>
 					{contactsToShow.map(contact => 
 						<Contact 
-						key={contact.id} 
-						contact = {contact}
-						toggleImportance = {()=>toggleImportant(contact.id)}
-						removeContact = {()=>removeContact(contact.id, contact.name)}
+                            key={contact.id} 
+                            contact = {contact}
+                            toggleImportance = {()=>toggleImportant(contact.id)}
+                            removeContact = {()=>removeContact(contact.id, contact.name)}
 						/>
 						)
 					}

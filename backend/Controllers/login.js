@@ -8,7 +8,7 @@ const loginRouter = express.Router()
 loginRouter.post('/', async (req, res, next) => {
 
     const { username, password } = req.body
-
+    console.log(req.body)
     try {
         const user =  await User.findOne({ username })
 
@@ -34,7 +34,7 @@ loginRouter.post('/', async (req, res, next) => {
             { expiresIn: 60*60 }
         )
 
-        res.status(200).send({ token, username:user.username, name:user.name })
+        res.status(200).send({ token, username:user.username, name:user.name, id:user._id })
     } catch (error) {
         next(error)
     }
