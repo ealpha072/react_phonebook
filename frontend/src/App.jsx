@@ -2,6 +2,8 @@ import { useState, useEffect} from 'react'
 import Contact from './Components/Contact'
 import contactServices from './services/contact'
 import loginServices from './services/login'
+import Loginform from './Components/Loginform'
+import Contactform from './Components/Contactform'
 
 const App = () => {
 
@@ -42,6 +44,7 @@ const App = () => {
             contactServices.setToken(user.token)
         }
     }, [])
+
     const contactsToShow = showAll ? contacts : contacts.filter(contact => contact.important == true)
 
     const addContact = (e) => {
@@ -166,66 +169,23 @@ const App = () => {
         setUser(null)
     }
 
-    const loginForm = () => (
-        <div>
-            <form action="" onSubmit={handleLoginForm}>
-            <div className="input-fields">
-                <input
-                type="text"
-                placeholder="Username"
-                name="username"
-                values={loginDetails.username}
-                onChange={loginInputChange}
-                />
-
-                <input
-                type="password"
-                placeholder="Password"
-                name="password"
-                values={loginDetails.password}
-                onChange={loginInputChange}
-                />
-                <button type="submit" className="btn add-btn">
-                Login
-                </button>
-            </div>
-            </form>
-        </div>
-    )
-
-    const contactForm  = () => (
-        <div className="input-contacts">
-          <form action="" onSubmit={addContact}>
-            <div className="input-fields">
-              <input
-                type="text"
-                placeholder="Input name"
-                value={values.name}
-                name="name"
-                onChange={handleInputChange}
-              />
-              <br />
-              <input
-                type="number"
-                placeholder="Phone number"
-                value={values.number}
-                name="number"
-                onChange={handleInputChange}
-              />
-              <button type="submit" className="add-btn btn">
-                Add
-              </button>
-            </div>
-          </form>
-        </div>
-    )
-
     return (
         <div className='container'>
 			<div className="inner-container">
 				<h1>Alpha Phonebook</h1>
                 {errorMsg !== '' ? <h5>{errorMsg}</h5> : ''}
-                {user === null ? loginForm() : contactForm()}
+                {user === null ? 
+                    <Loginform 
+                        handleLoginForm={handleLoginForm }
+                        loginDetails={loginDetails}
+                        loginInputChange={loginInputChange}
+                    /> : 
+                    <Contactform 
+                        addContact={addContact }
+                        values={values}
+                        handleInputChange={handleInputChange}
+                    />
+                }
 
 				<div className="search">
 					Search by Name <br></br>
