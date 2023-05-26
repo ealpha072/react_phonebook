@@ -8,7 +8,9 @@
   --mgt:10px;
 }
 
-html{
+html, body{
+  width: 100vw;
+  min-height: 100vh;
   font-family: monospace, 'Times New Roman', Times, serif;
   background-color: var(--lightest);
 }
